@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    background-image: url("../images/background-trial.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.8); /* Arka planın biraz şeffaf olmasını sağlayarak görselin görünmesini sağlıyoruz */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    height: 90%;
+    overflow-y: auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header .logo-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.header .logo {
+    width: 100px;
+    height: auto;
+}
+
+.header h1 {
+    margin: 10px 0;
+    font-size: 2em;
+    color: #333;
+}
+
+.header #sentence {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.header .submit-button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #fff8ab;
+    color: #000000;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.header .submit-button:hover {
+    background-color: #c3914d;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.header .submit-button:active {
+    background-color: #1e7e34;
+}
+
+#result, #history {
+    margin-top: 20px;
+    text-align: left;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.history-item {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.sentence-text {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
