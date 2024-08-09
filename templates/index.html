@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENTAGRAM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
@@ -12,20 +13,46 @@
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="{{ url_for('static', filename='images/SYNTÜRK-logo-bg-removed.png') }}" alt="Syntürk Logo"
+                <img src="{{ url_for('static', filename='images/SENTAGRAM-logo-bg-removed.png') }}" alt="Syntürk Logo"
                     class="logo">
             </div>
             <h1>SENTAGRAM</h1>
-            <h2>Cümleyi Ögelerine Ayırma</h2>
+            <h2>Cümleyi Ögelerine Ayırma ve Yazım Yanlışı Kontrolü</h2>
             <form id="sentence-form">
                 <input type="text" id="sentence" name="sentence" placeholder="Cümlenizi buraya yazın">
                 <button type="submit" class="submit-button">Gönder</button>
             </form>
         </div>
         <div id="result"></div>
-        <div id="history"></div>
+
+        <!-- Feedback Section -->
+        <div id="feedback-section" style="display: none;">
+            <h3>SENTAGRAM doğru ayırdı mı?</h3>
+            <button class="feedback-button correct" id="correct-button">Evet</button>
+            <button class="feedback-button incorrect" id="incorrect-button">Hayır</button>
+            <div id="thank-you-message" style="display: none; color: rgb(26, 134, 26);">Geri bildiriminiz için
+                teşekkürler!</div>
+            <div id="correction-input" style="display: none;">
+                <h4>Doğru ayrımı bizimle paylaşır mısınız?</h4>
+                <input type="text" id="correction-textbox"
+                    placeholder="Lütfen 'Kelime: Öge' veya 'Kelime = Öge' şeklinde yazınız.">
+                <button class="feedback-button" id="submit-correction-button">Gönder</button>
+            </div>
+        </div>
+
+        <!-- Yazım Yanlışı Kontrolü -->
+        <div id="spellcheck-result" style="display: none;">
+            <h3>Yazım Yanlışı Kontrolü</h3>
+            <div id="spelling-errors"></div>
+        </div>
+
+        <div id="history">
+            <button class="accordion">Cümlenin Ögeleri Geçmişi</button>
+            <div class="accordion-content" id="history-content"></div>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('sentence-form').onsubmit = async (e) => {
             e.preventDefault();
@@ -45,6 +72,8 @@
                 console.log("Original Result:", result);
                 displayResult(sentence, result);
                 addToHistory(sentence, result);
+                document.getElementById('feedback-section').style.display = 'block';
+                resetFeedbackSection();
             } catch (error) {
                 console.error("Error processing sentence:", error);
             }
@@ -57,7 +86,7 @@
             const tbody = document.createElement('tbody');
 
             const orderedKeys = Object.keys(mappedResult).sort((a, b) => sentence.indexOf(a) - sentence.indexOf(b));
-            console.log("Ordered Keys:", orderedKeys); // Loglama eklendi
+            console.log("Ordered Keys:", orderedKeys);
 
             for (const word of orderedKeys) {
                 const row = document.createElement('tr');
@@ -68,15 +97,20 @@
                 row.appendChild(cellWord);
                 row.appendChild(cellLabel);
                 tbody.appendChild(row);
-                console.log(`Display: ${word} -> ${mappedResult[word]}`);  // Loglama eklendi
+                console.log(`Display: ${word} -> ${mappedResult[word]}`);
             }
 
             table.appendChild(tbody);
             resultDiv.appendChild(table);
         }
 
+        function resetFeedbackSection() {
+            document.getElementById('thank-you-message').style.display = 'none';
+            document.getElementById('correction-input').style.display = 'none';
+        }
+
         function addToHistory(sentence, mappedResult) {
-            const history = document.getElementById('history');
+            const historyContent = document.getElementById('history-content');
             const historyItem = document.createElement('div');
             historyItem.classList.add('history-item');
 
@@ -88,7 +122,7 @@
             const tbody = document.createElement('tbody');
 
             const orderedKeys = Object.keys(mappedResult).sort((a, b) => sentence.indexOf(a) - sentence.indexOf(b));
-            console.log("Ordered Keys:", orderedKeys); // Loglama eklendi
+            console.log("Ordered Keys:", orderedKeys);
 
             for (const word of orderedKeys) {
                 const row = document.createElement('tr');
@@ -99,15 +133,61 @@
                 row.appendChild(cellWord);
                 row.appendChild(cellLabel);
                 tbody.appendChild(row);
-                console.log(`History: ${word} -> ${mappedResult[word]}`);  // Loglama eklendi
+                console.log(`History: ${word} -> ${mappedResult[word]}`);
             }
 
             resultTable.appendChild(tbody);
             historyItem.appendChild(sentenceText);
             historyItem.appendChild(resultTable);
-            history.insertBefore(historyItem, history.firstChild);  // En başa ekle
+            historyContent.insertBefore(historyItem, historyContent.firstChild);
+
+            const accordion = document.querySelector('.accordion');
+            accordion.style.display = 'block';
         }
 
+        document.addEventListener('DOMContentLoaded', function () {
+            const acc = document.querySelector('.accordion');
+            acc.addEventListener('click', function () {
+                this.classList.toggle('active');
+                const panel = this.nextElementSibling;
+                if (panel.style.display === 'block') {
+                    panel.style.display = 'none';
+                } else {
+                    panel.style.display = 'block';
+                }
+            });
+
+            document.getElementById('correct-button').addEventListener('click', () => {
+                document.getElementById('thank-you-message').style.display = 'block';
+                document.getElementById('correction-input').style.display = 'none';
+            });
+
+            document.getElementById('incorrect-button').addEventListener('click', () => {
+                document.getElementById('thank-you-message').style.display = 'none';
+                document.getElementById('correction-input').style.display = 'block';
+            });
+
+            document.getElementById('submit-correction-button').addEventListener('click', async () => {
+                const correction = document.getElementById('correction-textbox').value;
+                try {
+                    const response = await fetch('/submit-correction', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `sentence=${encodeURIComponent(document.getElementById('sentence').value)}&correction=${encodeURIComponent(correction)}`
+                    });
+                    const result = await response.json();
+                    if (result.error) {
+                        throw new Error(result.error);
+                    }
+                    document.getElementById('thank-you-message').style.display = 'block';
+                    document.getElementById('correction-input').style.display = 'none';
+                } catch (error) {
+                    console.error("Error submitting correction:", error);
+                }
+            });
+        });
     </script>
 </body>
 

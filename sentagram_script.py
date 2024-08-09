@@ -1,6 +1,7 @@
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 import torch
 import re
+from sentagram_spell_checker import SentagramSpellChecker
 
 # Modeli ve tokenizer'ı yükle
 tokenizer = AutoTokenizer.from_pretrained("synturk/sentagram")
@@ -135,3 +136,23 @@ result = process_sentence(text)
 # Sonuçları yazdır
 for word, label in result.items():
     print(f"{word}: {label}")
+
+
+def spell_check(text):
+    spell_checker = SentagramSpellChecker('data/tdk_word_meaning_data.csv')
+    results = spell_checker.check_text(text)
+
+    spell_check_result = []
+    for result in results:
+        if not result['is_correct']:
+            spell_check_result.append({
+                'word': result['word'],
+                'suggestions': result['suggestion_or_word']
+            })
+
+    return spell_check_result
+
+
+# Örnek cümle
+text = "Bilgesayarım bozuptu."  # Test için örnek cümle
+print(spell_check(text))  # Yazım hatalarını kontrol et
