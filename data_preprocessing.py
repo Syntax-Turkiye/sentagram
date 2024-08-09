@@ -60,5 +60,5 @@ class SentagramDataPreprocessing:
 
 
 if __name__ == '__main__':
-    sdp = SentagramDataPreprocessing('data/aug_aug_1500_ham_veri.json')
+    sdp = SentagramDataPreprocessing('data/aug_aug_last_dataset.json')
     sdp.preprocess()

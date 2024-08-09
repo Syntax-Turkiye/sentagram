@@ -20,3 +20,8 @@ def check_spelling(word):
     suggestions = spell_checker.suggest_for_word(word)
     python_suggestions = [str(suggestion) for suggestion in suggestions]
     return python_suggestions
+
+
+if __name__ == '__main__':
+    print(check_spelling("Dünye"))
+    print()

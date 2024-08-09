@@ -44,6 +44,6 @@ class SentagramDataAugmentation:
 
 
 if __name__ == '__main__':
-    augmenter = SentagramDataAugmentation('data/1500_ham_veri.json')
+    augmenter = SentagramDataAugmentation('data/last_dataset.json')
     augmenter.augment("ozne", "yuklem")
     augmenter.augment("z-tum", "yuklem")
